@@ -28,12 +28,13 @@ public class MemberService {
         return new MemberResponse(member.getId(), member.getEmail() , member.getName());
     }
 
-    public long create(MemberRequest memberRequest){
+    public Long create(MemberRequest memberRequest){
         //Spring Data JPA의 save()는 내부적으로 @Transactional이 걸려 있음
         Member member = new Member (memberRequest.getEmail(), memberRequest.getName());
         return memberRepository.save(member).getId();
     }
 
+    //dirty checking이 중요...
     public void update(Long id ,MemberRequest memberRequest){
         //update는 트랜젝셔널 선언해준다.
         Member member = memberRepository.findById(id).orElseThrow(()-> new ApiException (ErrorCode.MEMBER_NOT_FOUND));

@@ -12,10 +12,11 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class Member {
         @Id
-        @GeneratedValue
+        @GeneratedValue //자동생성
         private Long id;
         private String email;
         private String name;
+
         public Member (String email , String name){
             this.email = email;
             this.name = name;

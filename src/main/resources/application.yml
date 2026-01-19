@@ -10,9 +10,17 @@ spring:
       port: 6379
   jpa:
     hibernate:
+#      운영 서버에서는 절대 사용 금지 - ddl-auto : none / validate
       ddl-auto: update
     show-sql: true
     properties:
       hibernate.format_sql: true
 server:
   port: 8080
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  api-docs:
+    path: /v3/api-doc
