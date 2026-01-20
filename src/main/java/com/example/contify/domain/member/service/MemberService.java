@@ -1,11 +1,11 @@
-package com.example.contify.member.service;
+package com.example.contify.domain.member.service;
 
 import com.example.contify.global.error.ErrorCode;
 import com.example.contify.global.exception.ApiException;
-import com.example.contify.member.domain.Member;
-import com.example.contify.member.dto.MemberRequest;
-import com.example.contify.member.dto.MemberResponse;
-import com.example.contify.member.repository.MemberRepository;
+import com.example.contify.domain.member.entity.Member;
+import com.example.contify.domain.member.dto.MemberRequest;
+import com.example.contify.domain.member.dto.MemberResponse;
+import com.example.contify.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

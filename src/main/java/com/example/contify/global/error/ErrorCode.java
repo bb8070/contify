@@ -18,7 +18,7 @@ public enum ErrorCode {
     @Schema(description = "리소스를 찾을 수 없음")
     NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "대상을 찾을 수 없습니다."),
 
-    // 회원
+    // 회
     @Schema(description = "회원정보가 일치하지 않음")
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_NOT_FOUND", "회원을 찾을 수 없습니다."),
     @Schema(description = "이메일 중복이 확인됨")

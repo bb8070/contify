@@ -1,12 +1,10 @@
-package com.example.contify.member.controller;
+package com.example.contify.domain.member.controller;
 
 import com.example.contify.global.response.ApiResponse;
-import com.example.contify.member.domain.Member;
-import com.example.contify.member.dto.MemberRequest;
-import com.example.contify.member.dto.MemberResponse;
-import com.example.contify.member.service.MemberService;
+import com.example.contify.domain.member.dto.MemberRequest;
+import com.example.contify.domain.member.dto.MemberResponse;
+import com.example.contify.domain.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

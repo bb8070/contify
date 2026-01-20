@@ -1,4 +1,4 @@
-package com.example.contify.member.dto;
+package com.example.contify.domain.member.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

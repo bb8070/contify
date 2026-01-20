@@ -1,5 +1,6 @@
 package com.example.contify.global.response;
 
+import com.example.contify.global.error.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +28,8 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true,"SUCCESS", "요청이 성공했습니다", data);
     }
 
-    public static ApiResponse<Void> error(String code, String message){
-        return new ApiResponse<>(false, code, message, null);
+    public static ApiResponse<Void> error(ErrorCode code){
+        return new ApiResponse<>(false, code.getCode(), code.getMessage(), null);
     }
 
     public static ApiResponse<Void> success(){
