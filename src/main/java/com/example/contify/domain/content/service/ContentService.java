@@ -1,5 +1,6 @@
 package com.example.contify.domain.content.service;
 
+import com.example.contify.domain.content.dto.ContentSearchCondition;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.repository.ContentRepository;
 import com.example.contify.global.error.ErrorCode;
@@ -15,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContentService {
     private final ContentRepository contentRepository;
 
-    public Page<Content> getContents(Pageable pageable){
-        return contentRepository.findAll(pageable);
+    public Page<Content> getContents(ContentSearchCondition condition, Pageable pageable){
+        return contentRepository.search(condition,pageable);
     }
 
     @Transactional

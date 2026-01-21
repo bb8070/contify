@@ -1,5 +1,6 @@
 package com.example.contify.domain.content.controller;
 
+import com.example.contify.domain.content.dto.ContentSearchCondition;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.service.ContentService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,11 @@ public class ContentController {
     private final ContentService contentService;
 
     @GetMapping
-    public Page<Content> list(@PageableDefault(size=20 , sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        return contentService.getContents(pageable);
+    public Page<Content> list(
+            ContentSearchCondition condition,
+            @PageableDefault(size=20 , sort="createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable){
+        return contentService.getContents(condition, pageable);
     }
 
     @GetMapping("/{id}")

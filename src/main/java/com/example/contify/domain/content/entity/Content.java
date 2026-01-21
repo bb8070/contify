@@ -20,7 +20,7 @@ public class Content {
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Lob
+    @Lob // ContainsIgnoreCase가 동작하지 않음
     @Column(nullable = false)
     private String body;
 
