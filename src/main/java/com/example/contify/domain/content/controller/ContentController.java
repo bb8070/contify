@@ -1,18 +1,16 @@
 package com.example.contify.domain.content.controller;
 
+import com.example.contify.domain.content.dto.ContentListItem;
 import com.example.contify.domain.content.dto.ContentSearchCondition;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.service.ContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -22,11 +20,18 @@ public class ContentController {
     private final ContentService contentService;
 
     @GetMapping
-    public Page<Content> list(
-            ContentSearchCondition condition,
+    public Page<ContentListItem> list(
+            @ModelAttribute ContentSearchCondition condition, //HTTP 요청 파라미터(query, form-data)를 객체(DTO)에 자동으로 매핑 - 주로 생략하지만 가독성과 의도를 보여주기 위해 넣음
             @PageableDefault(size=20 , sort="createdAt", direction = Sort.Direction.DESC)
             Pageable pageable){
         return contentService.getContents(condition, pageable);
+    }
+    @GetMapping("/slice")
+    public Slice<ContentListItem> slice(
+            @ModelAttribute ContentSearchCondition condition, //HTTP 요청 파라미터(query, form-data)를 객체(DTO)에 자동으로 매핑 - 주로 생략하지만 가독성과 의도를 보여주기 위해 넣음
+            @PageableDefault(size=20 , sort="createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable){
+        return contentService.getSliceContents(condition, pageable);
     }
 
     @GetMapping("/{id}")
