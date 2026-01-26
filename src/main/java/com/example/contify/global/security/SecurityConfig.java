@@ -18,12 +18,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
-            JwtProvider jwtProvider
+            JwtProvider jwtProvider,
+            AccessTokenBlacklistService blacklistService
     )throws Exception{
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm-> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth-> auth.requestMatchers("/health","/error","/auth/**","/h2-console","/swagger-ui.html","/v3/**").permitAll().anyRequest().authenticated())
-                .addFilterBefore( new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore( new JwtAuthenticationFilter(jwtProvider, blacklistService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

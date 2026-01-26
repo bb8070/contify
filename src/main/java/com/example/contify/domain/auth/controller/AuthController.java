@@ -6,6 +6,7 @@ import com.example.contify.domain.auth.dto.TokenRefreshRequest;
 import com.example.contify.global.error.ErrorCode;
 import com.example.contify.global.exception.ApiException;
 import com.example.contify.global.response.ApiResponse;
+import com.example.contify.global.security.AccessTokenBlacklistService;
 import com.example.contify.global.security.JwtProvider;
 import com.example.contify.global.security.RefreshTokenService;
 import io.jsonwebtoken.Claims;
@@ -18,15 +19,18 @@ public class AuthController {
 
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final AccessTokenBlacklistService blacklistService;
     private final long refreshExpMs;
 
     public AuthController(
             JwtProvider jwtProvider ,
             RefreshTokenService refreshTokenService ,
+            AccessTokenBlacklistService blacklistService,
             @Value("${jwt.refresh-token-expiration}") long refreshExpMs
     ) {
         this.jwtProvider = jwtProvider;
         this.refreshTokenService =refreshTokenService;
+        this.blacklistService = blacklistService;
         this.refreshExpMs= refreshExpMs;
     }
 
@@ -83,6 +87,9 @@ public class AuthController {
         Long userId = jwtProvider.getUserId(claims);
 
         refreshTokenService.delete(userId);
+
+        String jti= claims.getId();
+        blacklistService.blacklist(jti , refreshExpMs);
 
         return ApiResponse.success();
 

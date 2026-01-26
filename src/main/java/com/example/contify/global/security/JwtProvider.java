@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Component
@@ -46,10 +47,13 @@ public class JwtProvider {
     public String createToken(Long userId, String role, String type , long expMs){
         Date now = new Date();
         Date expiry = new Date(now.getTime()+expMs);
+        String jti = UUID.randomUUID().toString();
+
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .claim("role", role)
                 .claim("type", type)
+                .setId(jti)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -83,4 +87,14 @@ public class JwtProvider {
     public Long getUserId(Claims claims){
         return Long.valueOf(claims.getSubject());
     }
+
+    // 토큰 남은 시간 계산용
+    public long getRemainingTtlMs(String token){
+        Claims claims = parseClaims(token);
+        long expMillis = claims.getExpiration().getTime();
+        long nowMillis = System.currentTimeMillis();
+        return Math.max(expMillis -  nowMillis , 0);
+    }
+
+
 }

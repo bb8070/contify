@@ -17,10 +17,11 @@ import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
-    public JwtAuthenticationFilter(JwtProvider jwtProvider){
+    public final AccessTokenBlacklistService blacklistService;
+    public JwtAuthenticationFilter(JwtProvider jwtProvider , AccessTokenBlacklistService blacklistService){
         this.jwtProvider = jwtProvider;
+        this.blacklistService = blacklistService;
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -29,6 +30,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             try{
+
+                if(blacklistService.isBlackListed(token)){
+                    throw new RuntimeException("Blacklisted access token");
+                }
+
                 Claims claims = jwtProvider.parseClaims(token);
                 Long userId = Long.valueOf(claims.getSubject());
                 String role = claims.get("role", String.class);
