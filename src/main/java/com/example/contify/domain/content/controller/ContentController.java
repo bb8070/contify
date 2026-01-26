@@ -4,12 +4,14 @@ import com.example.contify.domain.content.dto.ContentListItem;
 import com.example.contify.domain.content.dto.ContentSearchCondition;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.service.ContentService;
+import com.example.contify.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -38,4 +40,11 @@ public class ContentController {
     public Content detail(@PathVariable Long id){
         return contentService.getContent(id);
     }
+
+    @GetMapping("/me")
+    public ApiResponse<Long> myInfo(Authentication authentication){
+        Long userId = (Long) authentication.getPrincipal();
+        return ApiResponse.success(userId);
+    }
+
 }

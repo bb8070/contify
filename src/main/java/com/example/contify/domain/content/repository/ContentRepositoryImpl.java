@@ -84,7 +84,7 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
                 .from(c)
                 .where(buildWhere(cond, c))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1) // ✅ 한 개 더
+                .limit(pageable.getPageSize() + 1) //한 개 더
                 .fetch();
 
         boolean hasNext = items.size() > pageable.getPageSize();
@@ -98,6 +98,7 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
 
         if(StringUtils.hasText(condition.getKeyword())){
             String kw = condition.getKeyword();
+            //body는 clob이라 contains
             builder.and(c.title.containsIgnoreCase(kw).or(c.body.contains(kw)));
         }
 
@@ -130,11 +131,11 @@ private OrderSpecifier<?>[] toOrderSpecifiers(Sort sort, QContent c){
 
     }
 
-
-
     private BooleanExpression keywordContains(String keyword){
         if(!StringUtils.hasText(keyword)) return null; //null을 반환하는 이유 : where(null)을 무시해서 조건이 있을 때만 붙게함
+
         QContent content = QContent.content;
+
         return content.title.containsIgnoreCase(keyword)
                 .or(content.body.contains(keyword));
     }

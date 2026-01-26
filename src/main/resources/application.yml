@@ -34,3 +34,12 @@ springdoc:
     tags-sorter: alpha
   api-docs:
     path: /v3/api-docs
+
+jwt:
+  secret: contify-scret-key-contify-scret-key # secret은 최소 256바이트 이상
+  access-token-expiration : 1800000 # 30분
+  refresh-token-expiration: 604800000 #7일
+
+logging:
+  level:
+    org.springframework.security: DEBUG

@@ -2,7 +2,6 @@ package com.example.contify.global.response;
 
 import com.example.contify.global.error.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
@@ -28,12 +27,16 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true,"SUCCESS", "요청이 성공했습니다", data);
     }
 
-    public static ApiResponse<Void> error(ErrorCode code){
-        return new ApiResponse<>(false, code.getCode(), code.getMessage(), null);
-    }
-
     public static ApiResponse<Void> success(){
         return new ApiResponse<>(true,"SUCCESS","요청이 성공했습니다", null);
+    }
+
+    public static ApiResponse<Void> error(ErrorCode code){
+        return error(code, null);
+    }
+
+    public static <T> ApiResponse<T> error(ErrorCode code, T data){
+        return new ApiResponse<>(false, code.getCode(), code.getMessage(), null);
     }
 
 }
