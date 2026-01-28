@@ -28,21 +28,7 @@
 - 다중 정렬  
   `GET /api/contents?page=0&size=5&sort=viewCount,desc&sort=createdAt,desc`
 
-## 5. 트러블슈팅
-### (1) QueryDSL containsIgnoreCase 사용 시 500 오류 (lower(CLOB))
-- **증상**: keyword 검색 시 500 발생, `lower()` 함수 인자 타입 오류
-- **원인**: 본문(body)이 `@Lob`로 매핑되어 CLOB 타입이 되었고, `containsIgnoreCase()`가 내부적으로 `lower()`를 사용
-- **해결**: title(VARCHAR)은 `containsIgnoreCase`, body(CLOB)는 `contains`로 처리
-
-### (2) count 최적화
-- Page 응답에서 total count 계산은 비용이 크므로,
-- `PageableExecutionUtils.getPage()`를 사용해 **필요한 경우에만 count 쿼리를 실행**
-
-### (3) H2 DB에서 PK 자동 생성 전략 미지정으로 INSERT 실패
-- H2 환경에서 PK 생성 전략을 명시하지 않아 auto increment가 적용되지 않는 문제를 경험했고,
-  GenerationType.IDENTITY를 명시하여 DB별 동작 차이를 해결했다.
-
-## 6. 로컬 실행
+## 5. 로컬 실행
 - `./gradlew bootRun`
 - Swagger: `/swagger-ui.html`
 - H2 Console: `/h2-console`
