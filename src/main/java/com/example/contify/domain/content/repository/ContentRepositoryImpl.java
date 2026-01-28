@@ -3,7 +3,9 @@ package com.example.contify.domain.content.repository;
 import com.example.contify.domain.content.dto.ContentListItem;
 import com.example.contify.domain.content.dto.ContentSearchCondition;
 import com.example.contify.domain.content.entity.Content;
+import com.example.contify.domain.content.entity.ContentCategory;
 import com.example.contify.domain.content.entity.QContent;
+import com.example.contify.domain.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -30,12 +32,11 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
 
     private static final Set<String> ALLOWED_SORTS = Set.of("createdAt","viewCount","title");
 
-
-
     @Override
     public Page<ContentListItem> search(ContentSearchCondition condition, Pageable pageable) {
 
         QContent c = QContent.content;
+        QUser u = QUser.user;
 
         //조건이 늘어나도 구조가 무너지지 않기 때문에.
         BooleanBuilder where = buildWhere(condition, c);
@@ -47,9 +48,11 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
                     c.title,
                     c.category,
                     c.viewCount,
-                    c.createdAt
+                    c.createdAt,
+                    u.name
             ))
             .from(c)// content테이블에서 조회
+            .join(c.createdBy, u)
             .where(where) // 조건을 동적으로 조립
             .offset(pageable.getOffset()) //페이징 -DB에서 필요한 만큼만 조회
             .limit(pageable.getPageSize()) //페이징 - DB에서 필요한 만큼만 조회
@@ -76,12 +79,14 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
     @Override
     public Slice<ContentListItem> searchSlice(ContentSearchCondition cond, Pageable pageable) {
         QContent c = QContent.content;
+        QUser u = QUser.user;
 
         List<ContentListItem> items = queryFactory
                 .select(Projections.constructor(
                                 ContentListItem.class,
-                                c.id, c.title, c.category, c.viewCount, c.createdAt))
+                                c.id, c.title, c.category, c.viewCount, c.createdAt, u.name))
                 .from(c)
+                .join(c.createdBy , u)
                 .where(buildWhere(cond, c))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1) //한 개 더
@@ -102,8 +107,8 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
             builder.and(c.title.containsIgnoreCase(kw).or(c.body.contains(kw)));
         }
 
-        if(StringUtils.hasText(condition.getCategory())){
-            builder.and(c.category.equalsIgnoreCase(condition.getCategory()));
+        if(condition.getCategory() != null){
+            builder.and(c.category.eq(condition.getCategory()));
         }
         return builder;
     }
@@ -140,9 +145,8 @@ private OrderSpecifier<?>[] toOrderSpecifiers(Sort sort, QContent c){
                 .or(content.body.contains(keyword));
     }
 
-    private BooleanExpression categoryEq(String category){
-        if(!StringUtils.hasText((category))) return null;
-        return content.category.eq(category);
+    private BooleanExpression categoryEq(ContentCategory category){
+        return category != null ? content.category.eq(category) : null;
     }
 
     //정렬 propertiy는 entity의 필드명과 맞춰야함.

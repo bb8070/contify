@@ -1,5 +1,8 @@
 package com.example.contify.domain.content.dto;
 
+import com.example.contify.domain.content.entity.ContentCategory;
+import com.example.contify.domain.user.entity.User;
+
 import java.time.LocalDateTime;
 
 //실제 데이터 목록
@@ -8,9 +11,10 @@ import java.time.LocalDateTime;
 public record ContentListItem (
     Long id,
     String title,
-    String category,
+    ContentCategory category,
     long viewCount,
-    LocalDateTime createdAt
-){
+    LocalDateTime createdAt,
+    String name
+    ){
 
 }
