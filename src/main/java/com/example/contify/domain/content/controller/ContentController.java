@@ -41,9 +41,15 @@ public class ContentController {
         return contentService.getContent(id);
     }
 
+    @GetMapping("/logtest/{id}")
+    public Content logtest(@PathVariable Long id){
+        return contentService.testRollback(id);
+    }
+
     @GetMapping("/me")
     public ApiResponse<Long> myInfo(Authentication authentication){
         Long userId = (Long) authentication.getPrincipal();
+
         return ApiResponse.success(userId);
     }
 
