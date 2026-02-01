@@ -31,9 +31,32 @@ ___
 
 ---
 
+### Tag
+- **id**(PK)
+- name
+
+---
+
+### Content_Tag
+- Content와 Tag 의 `Many-to-Many` 관계를 풀기 위한 중간 엔티티.
+- **id** (PK)
+- content_id (FK -> contents.id)
+- tag_id (FK -> tag.id)
+
+---
+
 ## Relationship
+
 - users (1) - (N) contents
 - FK : contents.created_user_id -> users.id
+
+
+- tag (1) ── N content_tag N ── (1) contents
+- contents와 tag는 다대다(N:N) 관계이다.
+- 이를 풀기 위해 content_tag 중간 테이블을 사용한다.
+- content_tag는 다음과 같은 외래 키를 가진다.
+- FK : content_tag.content_id → contents.id  
+- FK : content_tag.tag_id → tag.id
 
 ---
 

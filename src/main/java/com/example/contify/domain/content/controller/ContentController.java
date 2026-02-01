@@ -1,5 +1,6 @@
 package com.example.contify.domain.content.controller;
 
+import com.example.contify.domain.content.dto.ContentDetailResponse;
 import com.example.contify.domain.content.dto.ContentListItem;
 import com.example.contify.domain.content.dto.ContentSearchCondition;
 import com.example.contify.domain.content.entity.Content;
@@ -36,9 +37,16 @@ public class ContentController {
         return contentService.getSliceContents(condition, pageable);
     }
 
+    @GetMapping("/all")
+    public Page<ContentListItem> all(@ModelAttribute ContentSearchCondition condition, Pageable pageable){
+        return  contentService.getContentsNew(condition, pageable);
+    }
+
+
     @GetMapping("/{id}")
-    public Content detail(@PathVariable Long id){
-        return contentService.getContent(id);
+    public ContentDetailResponse detail(@PathVariable Long id){
+       // return contentService.getContent(id);
+        return contentService.getContentDetail(id);
     }
 
     @GetMapping("/logtest/{id}")

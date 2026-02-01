@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,6 +51,13 @@ public class Content extends BaseTimeEntity {
             foreignKey = @ForeignKey(name="fk_contents_created_user")
     )
     private User createdBy;
+
+    @OneToMany(
+            mappedBy = "content"
+            ,cascade = CascadeType.ALL
+            ,orphanRemoval = true
+    )
+    private List<ContentTag> contentTags = new ArrayList<>();
 
     private Content(String title, String body, ContentCategory category, User createdBy){
         this.title = title;

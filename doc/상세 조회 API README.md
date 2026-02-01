@@ -19,6 +19,8 @@ GET /api/contents/{id}
 * fetch join을 통한 연관 엔티티 즉시 로딩
 * 트랜잭션 내 조회 + 상태 변경 처리
 
+
+
 ---
 
 ## Path Variable

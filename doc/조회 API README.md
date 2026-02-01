@@ -24,16 +24,17 @@ GET /api/contents
 ## Request Parameters
 
 | 이름       | 타입                     | 필수 | 설명                        |
-| -------- | ---------------------- | -- | ------------------------- |
+|----------|------------------------| -- |---------------------------|
 | category | ContentCategory (enum) | ❌  | 콘텐츠 카테고리                  |
 | page     | int                    | ❌  | 페이지 번호 (0부터 시작)           |
 | size     | int                    | ❌  | 페이지 사이즈                   |
 | sort     | string                 | ❌  | 정렬 조건 (예: createdAt,desc) |
+| tagIds   | string                 | ❌  | 관련 태그                     |
 
 ### 호출 예시
 
 ```http
-GET /api/contents?category=BACKEND&page=0&size=10&sort=createdAt,desc
+GET /api/contents?category=BACKEND&page=0&size=10&sort=createdAt,desc&tagIds=1,5
 ```
 
 ---
@@ -91,6 +92,13 @@ GET /api/contents?category=BACKEND&page=0&size=10&sort=createdAt,desc
 * 불필요한 엔티티 로딩 제거
 * 작성자(User) 정보는 join으로 한 번에 조회
 * N+1 문제 발생 없음
+* 컴파일 타임 안정성
+
+## N+1 
+* 연관 엔터티를 LAZY로 두고 반복 접근 시 발생함. 
+* JAP가 JOIN을 못해서가 아니라 접근 시점 로딩때문에 발생하는 문제
+* JPA의 정책은 필요한 시점에 접근하는 전략적 LAZY 구조 `모델링 자유도 + 예측가능성`
+* `fetchJoin`과 `EntityGraph`의 방식으로 해결할 수도 있지만 페이징 처리에 쓰이는 것은 위험해서 `DTOProjection` 선택
 
 ---
 

@@ -1,5 +1,6 @@
 package com.example.contify.domain.content.service;
 
+import com.example.contify.domain.content.dto.ContentDetailResponse;
 import com.example.contify.domain.content.dto.ContentListItem;
 import com.example.contify.domain.content.dto.ContentSearchCondition;
 import com.example.contify.domain.content.entity.Content;
@@ -23,6 +24,15 @@ public class ContentService {
 
     public Page<ContentListItem> getContents(ContentSearchCondition condition, Pageable pageable){
         return contentRepository.search(condition,pageable);
+    }
+
+    public Page<ContentListItem> getContentsNew(ContentSearchCondition condition, Pageable pageable){
+        return contentRepository.findContents(condition, pageable);
+    }
+
+    public ContentDetailResponse getContentDetail(Long id){
+        Content content = contentRepository.findDetailById(id).orElseThrow(()-> new ApiException(ErrorCode.INTERNAL_ERROR));
+        return ContentDetailResponse.from(content);
     }
 
     public Slice<ContentListItem> getSliceContents(ContentSearchCondition condition, Pageable pageable){
