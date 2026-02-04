@@ -1,0 +1,31 @@
+package com.example.contify.api.content;
+
+import com.example.contify.domain.content.service.ContentLikeService;
+import com.example.contify.domain.user.entity.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping
+public class ContentLikeController {
+
+    private final ContentLikeService contentLikeService;
+
+    @PostMapping("/{id}/like")
+    public ResponseEntity<Void> like(@PathVariable Long id , @AuthenticationPrincipal User user){
+        contentLikeService.like(user.getId(), id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/like")
+    public ResponseEntity<Void> unlike(@PathVariable Long id, @AuthenticationPrincipal User user){
+        contentLikeService.unlike(user.getId(), id);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+}

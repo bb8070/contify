@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 @Table(
         name="contents",
@@ -38,12 +38,24 @@ public class Content extends BaseTimeEntity {
     @Column(nullable = false, name="view_count")
     private long viewCount = 0;
 
+    // 낙관적 락용 버전 컬럼 (실습용)
+    //같은 row를 A/B가 동시에 수정하면: A가 먼저 커밋 > version 증가
+   // B가 커밋할 때 “내가 읽은 version과 DB version이 다름” > 충돌 예외 발생 > “덮어쓰기(=lost update)”를 막아줌
+    @Version
+    private Long version;
+
+    @Column(nullable = false)
+    private long likeCount = 0;
+    public void increaseLike(){likeCount++;}
+    public void decreaseLike(){likeCount--;}
+
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length=50)
     private ContentCategory category;
-
     //FetchType.LAZY : 필요할 때만 조회
     //ManyToOne = DB외래키 + 객체참조
+
     @ManyToOne(fetch= FetchType.LAZY , optional = false)
     @JoinColumn(
             name="created_user_id",
@@ -66,10 +78,9 @@ public class Content extends BaseTimeEntity {
         this.createdBy =createdBy;
     }
 
-    public Content of(String title, String body, ContentCategory category, User createdBy){
+    public static Content of(String title, String body, ContentCategory category, User createdBy){
         return new Content(title, body, category, createdBy);
     }
-
     public void increaseViewCount(){
         this.viewCount++;
     }

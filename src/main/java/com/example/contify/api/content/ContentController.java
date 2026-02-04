@@ -1,4 +1,4 @@
-package com.example.contify.domain.content.controller;
+package com.example.contify.api.content;
 
 import com.example.contify.domain.content.dto.ContentDetailResponse;
 import com.example.contify.domain.content.dto.ContentListItem;
