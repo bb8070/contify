@@ -12,8 +12,10 @@ import java.util.List;
 public class ContentSearchCondition {
     //검색 조건을 하나의 개념을 묶음
     private String keyword;
+    private Long userId;
     private ContentCategory category;
     private List<Long> tagIds;
     private LocalDate from;
     private LocalDate to;
+
 }

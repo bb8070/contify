@@ -24,4 +24,12 @@ public interface ContentRepository extends JpaRepository<Content, Long> , Conten
     @Query("update Content c set c.likeCount = c.likeCount-1 where c.id=:id")
     int decreaseLikeCount(@Param("id") Long id);
 
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Content c set c.bookmarkCount = c.bookmarkCount+1 where c.id=:id")
+    int increaseBookmark(@Param("id") Long id);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Content c set c.bookmarkCount = CASE WHEN c.bookmarkCount-1 >0 THEN c.bookmarkCount-1 ELSE 0 END where c.id=:id")
+    int decreaseBookmark(@Param("id") Long id);
+
 }

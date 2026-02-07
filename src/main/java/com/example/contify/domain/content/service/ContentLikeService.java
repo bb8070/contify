@@ -30,7 +30,7 @@ public class ContentLikeService {
 
     @Transactional
     public void unlike(Long userId, Long contentId){
-        long delete = likeRepository.deleteByUserIdAndContent_Id(userId, contentId);
+        long delete = likeRepository.deleteByUserIdAndContentId(userId, contentId);
         if(delete == 0) return; //원래 좋아요를 안한 상태이면 멱등
 
         contentRepository.decreaseLikeCount(contentId);

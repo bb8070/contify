@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.example.contify.domain.content.entity.QContent.content;
-import static org.springframework.data.jpa.repository.query.JpqlQueryBuilder.orderBy;
 
 @RequiredArgsConstructor
 public class ContentRepositoryImpl implements ContentRepositoryCustom {
@@ -88,8 +87,9 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
 
         BooleanBuilder where = buildWhere(condition, c);
 
-        List<ContentListItem> contents = queryFactory.select(Projections.constructor(ContentListItem.class,
-                                                        c.id , c.title , c.category, c.viewCount , c.createdAt , u.name))
+        List<ContentListItem> contents = queryFactory.select(
+                Projections.constructor(ContentListItem.class,
+                                         c.id , c.title , c.category, c.viewCount , c.createdAt , u.name))
                 .from(c)
                 .where(where)
                 .join(c.createdBy , u)

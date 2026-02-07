@@ -47,8 +47,12 @@ public class Content extends BaseTimeEntity {
     @Column(nullable = false)
     private long likeCount = 0;
     public void increaseLike(){likeCount++;}
-    public void decreaseLike(){likeCount--;}
+    public void decreaseLike(){likeCount++;}
 
+    @Column(nullable = false)
+    private long bookmarkCount = 0;
+    public void increaseBookmarkCount(){bookmarkCount++;}
+    public void decreasebookmarkCount(){bookmarkCount--;}
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length=50)

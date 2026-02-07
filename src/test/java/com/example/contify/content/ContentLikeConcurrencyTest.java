@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = "spring.sql.init.mode=never")
-@Sql(scripts = "/test-setup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ContentLikeConcurrencyTest {
 
     @Autowired
@@ -62,7 +61,7 @@ class ContentLikeConcurrencyTest {
             likeService.like(userId, contentId);
         });
         Content loaded = contentRepository.findById(contentId).orElseThrow();
-        long likeRows = likeRepository.countByContent_Id(contentId);
+        long likeRows = likeRepository.countByContentId(contentId);
 
         assertThat(likeRows).isEqualTo(threads);// 좋아요 테이블의 로우가 50개인지
         assertThat(loaded.getLikeCount()).isEqualTo((long) threads); //콘텐츠의 컬럼값이 50인지
@@ -76,7 +75,7 @@ class ContentLikeConcurrencyTest {
         runConcurrently(threads, (i) -> likeService.like(sameUserId, contentId));
 
         Content loaded = contentRepository.findById(contentId).orElseThrow();
-        long likeRows = likeRepository.countByContent_Id(contentId);
+        long likeRows = likeRepository.countByContentId(contentId);
 
         assertThat(likeRows).isEqualTo(1); // 30개 요청이와도 1번만 반영
         assertThat(loaded.getLikeCount()).isEqualTo(1L); //DB에서 가지고 온 값도 1인지?

@@ -16,4 +16,5 @@ public interface ContentRepositoryCustom {
     Page<ContentListItem> findContents(ContentSearchCondition condition,Pageable pageable);
     Optional<Content> findDetailById(Long Id);
 
+
 }
