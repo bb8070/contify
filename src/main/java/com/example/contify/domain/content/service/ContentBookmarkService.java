@@ -26,10 +26,14 @@ public class ContentBookmarkService {
 
     @Transactional
     public void marked(Long userId, Long contentId){
-        Content content = contentRepository.findById(contentId).orElseThrow(()-> new IllegalArgumentException("content not found"));
-        try{
+        Content content = contentRepository.findById(contentId).orElseThrow(()-> {
+            String contentNotFound = "content not found";
+            return new IllegalArgumentException(contentNotFound);
+        });
+        try {
             bookmarkRepository.save(new ContentBookmark(userId, content));//유니크로 중복 방지
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
+
             // 이미 좋아요 한 상태 - 멱등 처리 (조용히 성공으로 봄)
             return;
         }

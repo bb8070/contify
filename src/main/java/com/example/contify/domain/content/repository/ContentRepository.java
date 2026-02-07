@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface ContentRepository extends JpaRepository<Content, Long> , ContentRepositoryCustom {
 
     //DB 원자적 증가 ( lost update 방지 )
@@ -32,4 +34,10 @@ public interface ContentRepository extends JpaRepository<Content, Long> , Conten
     @Query("update Content c set c.bookmarkCount = CASE WHEN c.bookmarkCount-1 >0 THEN c.bookmarkCount-1 ELSE 0 END where c.id=:id")
     int decreaseBookmark(@Param("id") Long id);
 
+    @Modifying
+    @Query("update Content c set c.viewCount = c.viewCount + :count where c.id = :id")
+    void increaseViewCount(@Param("id") Long id, @Param("count") Long count);
+
+    @Query("select c.id from Content c order by c.id desc")
+    List<Long> findAllIds();
 }

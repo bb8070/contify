@@ -45,7 +45,7 @@ public class ContentController {
 
     @GetMapping("/{id}")
     public ContentDetailResponse detail(@PathVariable Long id){
-       // return contentService.getContent(id);
+       //return contentService.getContent(id);
         return contentService.getContentDetail(id);
     }
 

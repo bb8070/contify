@@ -22,4 +22,6 @@ jwt:
 
 logging:
   level:
+    root: INFO
+    com.example.contify: DEBUG
     org.springframework.security: DEBUG

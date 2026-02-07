@@ -14,14 +14,17 @@ public class ContentDetailResponse {
     private String content;
     private String authorName;
     private LocalDateTime createdAt;
+    private Long viewCount;
 
-    public static ContentDetailResponse from (Content content){
+    public static ContentDetailResponse from (Content content, Long redisViewCount){
         return new ContentDetailResponse(
                 content.getId(),
                 content.getTitle(),
                 content.getBody(),
                 content.getCreatedBy().getName(),
-                content.getCreatedAt()
+                content.getCreatedAt(),
+                redisViewCount
+
         ) {
 
         };
