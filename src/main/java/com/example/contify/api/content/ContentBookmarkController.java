@@ -26,7 +26,7 @@ public class ContentBookmarkController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/unmark")
+    @DeleteMapping("/{id}/bookmark")
     public ResponseEntity<Void> unmark(@PathVariable Long id , @AuthenticationPrincipal User user){
         contentBookmarkService.unmarked(user.getId() , id);
         return ResponseEntity.ok().build();

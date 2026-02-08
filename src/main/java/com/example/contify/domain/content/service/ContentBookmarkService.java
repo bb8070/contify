@@ -2,11 +2,11 @@ package com.example.contify.domain.content.service;
 
 import com.example.contify.domain.content.dto.ContentListItem;
 import com.example.contify.domain.content.dto.ContentSearchCondition;
+import com.example.contify.domain.content.dto.PopularMetric;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.entity.ContentBookmark;
 import com.example.contify.domain.content.repository.ContentBookmarkRepository;
 import com.example.contify.domain.content.repository.ContentRepository;
-import com.example.contify.domain.user.repository.UserRepository;
 import com.example.contify.global.error.ErrorCode;
 import com.example.contify.global.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class ContentBookmarkService {
 
     private final ContentBookmarkRepository bookmarkRepository;
     private final ContentRepository contentRepository;
-    private final UserRepository userRepository;
+    private final ContentReactionRankService reactionRankService;
 
     @Transactional
     public void marked(Long userId, Long contentId){
@@ -38,6 +38,7 @@ public class ContentBookmarkService {
             return;
         }
         contentRepository.increaseBookmark(contentId); //원자적 증가
+        reactionRankService.increase(PopularMetric.BOOKMARK, contentId);
     }
 
     @Transactional
@@ -45,6 +46,7 @@ public class ContentBookmarkService {
         long delete =  bookmarkRepository.deleteByUserIdAndContent_Id(userId, contentId);//유니크로 중복 방지
         if(delete==0) return;
         contentRepository.decreaseBookmark(contentId); //원자적 증가
+        reactionRankService.decrease(PopularMetric.BOOKMARK, contentId);
     }
 
     @Transactional(readOnly = true)

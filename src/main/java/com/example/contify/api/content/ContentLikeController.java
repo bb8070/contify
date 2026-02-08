@@ -7,16 +7,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import static com.example.contify.domain.user.entity.QUser.user;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/api/contents")
 public class ContentLikeController {
 
     private final ContentLikeService contentLikeService;
 
     @PostMapping("/{id}/like")
-    public ResponseEntity<Void> like(@PathVariable Long id , @AuthenticationPrincipal User user){
-        contentLikeService.like(user.getId(), id);
+    public ResponseEntity<Void> like(@PathVariable Long id , @AuthenticationPrincipal Long userId){
+        contentLikeService.like(userId, id);
         return ResponseEntity.ok().build();
     }
 

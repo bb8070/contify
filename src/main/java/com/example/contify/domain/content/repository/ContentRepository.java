@@ -1,6 +1,7 @@
 package com.example.contify.domain.content.repository;
 
 import com.example.contify.domain.content.entity.Content;
+import com.example.contify.domain.content.entity.ContentCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,10 +35,27 @@ public interface ContentRepository extends JpaRepository<Content, Long> , Conten
     @Query("update Content c set c.bookmarkCount = CASE WHEN c.bookmarkCount-1 >0 THEN c.bookmarkCount-1 ELSE 0 END where c.id=:id")
     int decreaseBookmark(@Param("id") Long id);
 
-    @Modifying
-    @Query("update Content c set c.viewCount = c.viewCount + :count where c.id = :id")
-    void increaseViewCount(@Param("id") Long id, @Param("count") Long count);
+//    @Modifying
+ //   @Query("update Content c set c.viewCount = c.viewCount + :count where c.id = :id")
+  //  void increaseViewCount(@Param("id") Long id, @Param("count") Long count);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Content c set c.viewCount = c.viewCount + :delta where c.id = :id")
+    int increaseViewCount(@Param("id")Long id , @Param("delta") Long Delta);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Content c set c.bookmarkCount = CASE WHEN c.bookmarkCount + :delta >0 THEN c.bookmarkCount + :delta ELSE 0 END where c.id = :id")
+    int increaseBookmarkCount(@Param("id") Long id , @Param("delta") Long Delta);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("update Content c set c.likeCount = CASE WHEN c.likeCount + :delta > 0 THEN c.likeCount +:delta ELSE 0 END where c.id = :id")
+    int increaseLikeCount(@Param("id") Long id , @Param("delta") Long Delta);
 
     @Query("select c.id from Content c order by c.id desc")
     List<Long> findAllIds();
+
+    //IN조회
+    List<Content> findByIdInAndCategory(List<Long> ids, ContentCategory category);
+    List<Content> findByIdIn(List<Long> ids);
+
 }

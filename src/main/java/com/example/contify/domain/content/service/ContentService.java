@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContentService {
     private final ContentRepository contentRepository;
     private final ContentViewRedisRepository viewRedisRepository;
+    private final ContentViewRankService contentViewRankService;
 
     private final ViewLogService viewLogService;
     private final EntityManager entityManager;
@@ -35,8 +36,12 @@ public class ContentService {
 
     public ContentDetailResponse getContentDetail(Long id){
         Content content = contentRepository.findDetailById(id).orElseThrow(()-> new ApiException(ErrorCode.INTERNAL_ERROR));
+
         Long redisViewCount = viewRedisRepository.increase(id);
-        return ContentDetailResponse.from(content, redisViewCount);
+        Long viewCount = content.getViewCount() + redisViewCount;
+        contentViewRankService.increaseViewForRanking(id);
+
+        return ContentDetailResponse.from(content, viewCount);
     }
 
     public Slice<ContentListItem> getSliceContents(ContentSearchCondition condition, Pageable pageable){

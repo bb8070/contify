@@ -1,5 +1,6 @@
 package com.example.contify.domain.content.service;
 
+import com.example.contify.domain.content.dto.PopularMetric;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.entity.ContentLike;
 import com.example.contify.domain.content.repository.ContentLikeRepository;
@@ -14,18 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContentLikeService {
     private final ContentRepository contentRepository;
     private final ContentLikeRepository likeRepository;
+    private final ContentReactionRankService contentReactionRankService;
 
-    @Transactional
+    @Transactional(noRollbackFor = DataIntegrityViolationException.class)
     public void like(Long userId, Long contentId){
         Content content = contentRepository.findById(contentId).orElseThrow(()-> new IllegalArgumentException("content not found"));
-        try{
-            likeRepository.save(new ContentLike(userId, content));//유니크로 중복 방지
-        }catch (DataIntegrityViolationException e){
-            // 이미 좋아요 한 상태 - 멱등 처리 (조용히 성공으로 봄)
-            return;
-        }
+        if(likeRepository.existsByUserIdAndContentId(userId, contentId)){return;}
+            likeRepository.save(new ContentLike(userId, content));
+            contentRepository.increaseLikeCount(contentId); //원자적 증가
+            contentReactionRankService.increase(PopularMetric.LIKE, contentId);
 
-        contentRepository.increaseLikeCount(contentId); //원자적 증가
     }
 
     @Transactional
@@ -34,5 +33,6 @@ public class ContentLikeService {
         if(delete == 0) return; //원래 좋아요를 안한 상태이면 멱등
 
         contentRepository.decreaseLikeCount(contentId);
+        contentReactionRankService.decrease(PopularMetric.LIKE, contentId);
     }
 }
