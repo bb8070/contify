@@ -21,7 +21,7 @@ public class ContentDetailResponse {
                 content.getId(),
                 content.getTitle(),
                 content.getBody(),
-                content.getCreatedBy().getName(),
+                content.getCreatedUser().getName(),
                 content.getCreatedAt(),
                 redisViewCount
 

@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.contify.domain.user.entity.QUser.user;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/contents")

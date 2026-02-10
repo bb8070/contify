@@ -3,9 +3,11 @@ package com.example.contify.domain.content.service;
 import com.example.contify.domain.content.dto.PopularMetric;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.entity.ContentLike;
+import com.example.contify.domain.content.event.ContentLikedEvent;
 import com.example.contify.domain.content.repository.ContentLikeRepository;
 import com.example.contify.domain.content.repository.ContentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ public class ContentLikeService {
     private final ContentLikeRepository likeRepository;
     private final ContentReactionRankService contentReactionRankService;
 
+    private final ApplicationEventPublisher publisher;
+
     @Transactional(noRollbackFor = DataIntegrityViolationException.class)
     public void like(Long userId, Long contentId){
         Content content = contentRepository.findById(contentId).orElseThrow(()-> new IllegalArgumentException("content not found"));
@@ -24,7 +28,7 @@ public class ContentLikeService {
             likeRepository.save(new ContentLike(userId, content));
             contentRepository.increaseLikeCount(contentId); //원자적 증가
             contentReactionRankService.increase(PopularMetric.LIKE, contentId);
-
+            publisher.publishEvent(new ContentLikedEvent(contentId, userId));
     }
 
     @Transactional

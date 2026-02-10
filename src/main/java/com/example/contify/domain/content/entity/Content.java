@@ -66,7 +66,7 @@ public class Content extends BaseTimeEntity {
             nullable = false,
             foreignKey = @ForeignKey(name="fk_contents_created_user")
     )
-    private User createdBy;
+    private User createdUser;
 
     @OneToMany(
             mappedBy = "content"
@@ -75,16 +75,22 @@ public class Content extends BaseTimeEntity {
     )
     private List<ContentTag> contentTags = new ArrayList<>();
 
-    private Content(String title, String body, ContentCategory category, User createdBy){
+    private Content(String title, String body, ContentCategory category, User createdUser){
         this.title = title;
         this.body = body;
         this.category =category;
-        this.createdBy =createdBy;
+        this.createdUser =createdUser;
     }
 
-    public static Content of(String title, String body, ContentCategory category, User createdBy){
-        return new Content(title, body, category, createdBy);
+    public static Content of(String title, String body, ContentCategory category, User createdUser){
+        return new Content(title, body, category, createdUser);
     }
+
+    public static Content create(User createdUser , String title, String body, ContentCategory category){
+        return new Content(title, body, category, createdUser);
+    }
+
+
     public void increaseViewCount(){
         this.viewCount++;
     }

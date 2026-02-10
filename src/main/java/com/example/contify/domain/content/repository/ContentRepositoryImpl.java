@@ -56,7 +56,7 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
                     u.name
             ))
             .from(c)// content테이블에서 조회
-            .join(c.createdBy, u)
+            .join(c.createdUser, u)
             .where(where) // 조건을 동적으로 조립
             .offset(pageable.getOffset()) //페이징 -DB에서 필요한 만큼만 조회
             .limit(pageable.getPageSize()) //페이징 - DB에서 필요한 만큼만 조회
@@ -92,7 +92,7 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
                                          c.id , c.title , c.category, c.viewCount , c.createdAt , u.name))
                 .from(c)
                 .where(where)
-                .join(c.createdBy , u)
+                .join(c.createdUser , u)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(orderBy(pageable, c))
@@ -115,7 +115,7 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
         QUser u = QUser.user;
         return Optional.ofNullable(
                 queryFactory.selectFrom(c)
-                        .join(c.createdBy , u).fetchJoin()
+                        .join(c.createdUser , u).fetchJoin()
                         .where(c.id.eq(id))
                         .fetchOne()
         );
@@ -132,7 +132,7 @@ public class ContentRepositoryImpl implements ContentRepositoryCustom {
                                 ContentListItem.class,
                                 c.id, c.title, c.category, c.viewCount, c.createdAt, u.name))
                 .from(c)
-                .join(c.createdBy , u)
+                .join(c.createdUser , u)
                 .where(buildWhere(cond, c))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1) //한 개 더

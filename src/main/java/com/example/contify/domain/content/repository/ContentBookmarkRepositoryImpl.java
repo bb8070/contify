@@ -46,7 +46,7 @@ public class ContentBookmarkRepositoryImpl implements ContentBookmarkRepositoryC
                         u.name))
                 .from(b)
                 .join(b.content, c)
-                .join(c.createdBy, u)
+                .join(c.createdUser, u)
                 .where(where)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

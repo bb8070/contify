@@ -3,17 +3,24 @@ package com.example.contify.api.content;
 import com.example.contify.domain.content.dto.ContentDetailResponse;
 import com.example.contify.domain.content.dto.ContentListItem;
 import com.example.contify.domain.content.dto.ContentSearchCondition;
+import com.example.contify.domain.content.dto.CreateContentRequest;
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.service.ContentService;
+import com.example.contify.domain.user.entity.User;
 import com.example.contify.global.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.file.attribute.UserPrincipal;
 
 
 @RestController
@@ -59,6 +66,16 @@ public class ContentController {
         Long userId = (Long) authentication.getPrincipal();
 
         return ApiResponse.success(userId);
+    }
+
+    @PostMapping("/write")
+    public ResponseEntity<Long> create(
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody CreateContentRequest request
+            ){
+            return ResponseEntity.ok(
+                    contentService.create(userId, request)
+            );
     }
 
 }

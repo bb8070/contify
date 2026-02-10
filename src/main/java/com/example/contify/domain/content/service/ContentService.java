@@ -1,15 +1,17 @@
 package com.example.contify.domain.content.service;
 
-import com.example.contify.domain.content.dto.ContentDetailResponse;
-import com.example.contify.domain.content.dto.ContentListItem;
-import com.example.contify.domain.content.dto.ContentSearchCondition;
+import com.example.contify.domain.content.dto.*;
 import com.example.contify.domain.content.entity.Content;
+import com.example.contify.domain.content.event.ContentCreateEvent;
 import com.example.contify.domain.content.repository.ContentRepository;
 import com.example.contify.domain.content.repository.ContentViewRedisRepository;
+import com.example.contify.domain.user.entity.User;
+import com.example.contify.domain.user.repository.UserRepository;
 import com.example.contify.global.error.ErrorCode;
 import com.example.contify.global.exception.ApiException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,9 +24,11 @@ public class ContentService {
     private final ContentRepository contentRepository;
     private final ContentViewRedisRepository viewRedisRepository;
     private final ContentViewRankService contentViewRankService;
+    private final ApplicationEventPublisher publisher;
 
     private final ViewLogService viewLogService;
     private final EntityManager entityManager;
+    private final UserRepository userRepository;
 
     public Page<ContentListItem> getContents(ContentSearchCondition condition, Pageable pageable){
         return contentRepository.search(condition,pageable);
@@ -62,15 +66,22 @@ public class ContentService {
     @Transactional
     public Content testRollback(Long id){
         Content content = contentRepository.findById(id).orElseThrow();
-
         content.increaseViewCount(); //기존 트랜잭션
-
         contentRepository.flush();
         viewLogService.saveLogRequiresNew(id); //내부 로그 트랜잭션
 
-
-
         throw new RuntimeException("ERROR!!!!");
+    }
+
+    @Transactional
+    public Long create(Long authorId, CreateContentRequest req){
+        User author = userRepository.getReferenceById(authorId);
+        Content saved = contentRepository.save(
+                Content.of(req.title(), req.body(), req.category(), author)
+        );
+
+        publisher.publishEvent(new ContentCreateEvent(saved.getId(), authorId));
+        return saved.getId();
     }
 
 }

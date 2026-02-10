@@ -2,6 +2,7 @@ package com.example.contify.domain.content.repository;
 
 import com.example.contify.domain.content.entity.Content;
 import com.example.contify.domain.content.entity.ContentCategory;
+import com.example.contify.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -53,6 +54,9 @@ public interface ContentRepository extends JpaRepository<Content, Long> , Conten
 
     @Query("select c.id from Content c order by c.id desc")
     List<Long> findAllIds();
+
+    @Query("select c.createdUser.id from Content c where c.id = :contentId")
+    Long findAuthorIdByContentId(@Param("contentId") Long contentId);
 
     //IN조회
     List<Content> findByIdInAndCategory(List<Long> ids, ContentCategory category);
