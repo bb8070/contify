@@ -21,14 +21,14 @@ public class ContentBookmarkController {
     private final ContentBookmarkService contentBookmarkService;
 
     @PostMapping("/{id}/bookmark")
-    public ResponseEntity<Void> bookmark(@PathVariable Long id , @AuthenticationPrincipal User user){
-        contentBookmarkService.marked(user.getId(), id);
+    public ResponseEntity<Void> bookmark(@PathVariable Long id , @AuthenticationPrincipal Long userId){
+        contentBookmarkService.marked(userId, id);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}/bookmark")
-    public ResponseEntity<Void> unmark(@PathVariable Long id , @AuthenticationPrincipal User user){
-        contentBookmarkService.unmarked(user.getId() , id);
+    public ResponseEntity<Void> unmark(@PathVariable Long id , @AuthenticationPrincipal Long userId){
+        contentBookmarkService.unmarked(userId , id);
         return ResponseEntity.ok().build();
     }
 

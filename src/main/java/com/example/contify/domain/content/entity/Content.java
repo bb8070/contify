@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -74,6 +75,17 @@ public class Content extends BaseTimeEntity {
             ,orphanRemoval = true
     )
     private List<ContentTag> contentTags = new ArrayList<>();
+
+    @Column(name="thumbnail_url")
+    private String thumbnailUrl;
+
+    @Column(name="thumbnail_key")
+    private String thumbnailKey;
+
+    public void changeThumbnail(String key, String url) {
+        this.thumbnailKey = key;
+        this.thumbnailUrl = url;
+    }
 
     private Content(String title, String body, ContentCategory category, User createdUser){
         this.title = title;

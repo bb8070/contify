@@ -39,3 +39,23 @@
 - 상황 : Content 목록 조회에서 작성자 (User) 정보까지 함께 내려줘야하는 요구가 생김
 - 결론 : 엔터티 로딩 후 연관 객체 접근을 한다면 `fetchJoin()` 이 필요할 수 있음 (N+1 방지) / 하지만 본 프로젝트는 DTO Projection 방식을 사용하므로, 필요한 작성자 컬럼은 join으로 함께 조회하여 해결했다.
 - 배운 점 : Projection은 필요한 컬럼만 조회할 수 있어 성능/구조가 명확하다. `fetchJoin` 은 `엔터티 그래프를 로딩` 하는 목적에 더 적합하다.
+
+## 8) AWS SDK 자격증명 로딩 실패
+- 증상 : S3 업로드 시 아래 오류 발생
+        `SdkClientException: Unable to load credentials from any of the providers in the chain`
+        `EnvironmentVariableCredentialsProvider(): Unable to load credentials`
+- 원인 : AWS SDK(v2)는 자격증명을 환경변수, 로컬 프로파일, IAM Role 등의 체인에서 탐색한다. 로컬 개발 환경에서 Access Key/Secret Key가 IDE 실행 환경에 주입되지 않아 SDK가 자격증명을 찾지 못했다.
+- 해결 : IntelliJ Run/Debug Configuration에 환경변수로 자격증명 주입
+- 배운 점 : AWS 연동 이슈는 코드보다 **실행 환경(IDE/OS) 설정**이 원인인 경우가 많다. Access Key는 코드/설정 파일에 하드코딩하지 않고 환경변수/프로파일 방식으로 관리해야 한다.
+
+## 9) S3 객체 URL 접근 불가 (403 AccessDenied)
+- 증상 : 업로드 후 반환된 URL로 접근 시 `AccessDenied` 응답
+- 원인 : S3 객체는 기본적으로 Private 이며, Public Read 권한이 없으면 URL 직접 접근이 불가능하다. 또한 URL 접근 이슈처럼 보였으나, 실제로는 업로드된 Object Key 경로(prefix)와 콘솔에서 확인한 경로가 달라 “파일이 없는 것처럼 보이는” 착시가 발생했다.
+- 해결 : S3 콘솔에서 실제 업로드된 Object Key를 확인하여 코드에서 생성하는 key 규칙과 일치하도록 수정 / (실무형) S3 객체는 Private 유지 + Presigned URL을 통해 제한 시간 동안 접근 허용
+- 배운 점 : S3 접근 오류는 업로드 실패가 아니라 **권한/정책 문제**인 경우가 많다. Public 오픈보다 Presigned URL 방식이 보안과 운영 측면에서 적합하다.
+
+## 10) URL은 생성되지만 파일이 보이지 않는 문제 (경로 착각)
+- 증상 : 업로드 API 응답으로 URL은 반환되지만, S3 콘솔에서 기대한 폴더에 파일이 보이지 않음
+- 원인 : S3는 실제 디렉터리 구조가 아닌 **Object Key(prefix) 기반 저장소**이기 때문에, 코드에서 생성한 key 경로와 콘솔에서 확인한 prefix가 달라 다른 위치에 파일이 저장되었다.
+- 해결 : Object Key 규칙을 표준화 `contify/dev/contents/{contentId}/thumbnails/{uuid}.{ext}` 콘솔에서 prefix 검색 및 Object Key 기준으로 실제 저장 위치 검증
+- 배운 점 : S3는 “폴더” 개념이 아닌 문자열 Key 기반 저장소이므로, 업로드/조회/삭제 로직 전반에서 **Key 규칙의 일관성**이 운영 편의성과 디버깅 난이도를 좌우한다.

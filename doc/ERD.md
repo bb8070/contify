@@ -28,6 +28,21 @@ ___
 - created_user_id (FK -> user.id)
 - created_at
 - updated_at
+- thumbnail_url   ← 추가
+- thumbnail_key   ← 추가 (S3 object key)
+
+### 파일 업로드 구조 변경
+
+콘텐츠 썸네일 업로드 기능 추가에 따라 `contents` 테이블에 파일 메타데이터 컬럼을 확장하였다.
+
+
+| 컬럼명 | 타입 | 설명 |
+|-------|------|------|
+| thumbnail_url | varchar | 썸네일 접근 URL (Public 또는 Presigned URL) |
+| thumbnail_key | varchar | S3 Object Key (삭제/교체/Presigned URL 생성에 사용) |
+
+- 파일 접근 URL과 S3 Object Key를 분리 저장하여,  
+  파일 교체/삭제 및 접근 제어 정책 변경 시 정합성을 유지한다.
 
 ---
 
@@ -69,4 +84,6 @@ ___
 ## Notes
 - 연관관계는 ManyToOne 단방향으로 설계하여 단순성과 성능을 우선하였다.
 - 목록 조회 성능을 고려하여 category, created_at 컬럼에 인덱스를 추가하였다.
+
+
 

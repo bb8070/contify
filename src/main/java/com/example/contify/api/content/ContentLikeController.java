@@ -21,8 +21,8 @@ public class ContentLikeController {
     }
 
     @DeleteMapping("/{id}/like")
-    public ResponseEntity<Void> unlike(@PathVariable Long id, @AuthenticationPrincipal User user){
-        contentLikeService.unlike(user.getId(), id);
+    public ResponseEntity<Void> unlike(@PathVariable Long id, @AuthenticationPrincipal Long userId){
+        contentLikeService.unlike(userId, id);
         return ResponseEntity.ok().build();
     }
 
